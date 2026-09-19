@@ -9,12 +9,15 @@ Passive subdomain enumeration via Certificate Transparency logs (crt.sh).
 
 ```bash
 python3 recon.py example.com > subdomains.txt
+python3 recon.py example.com --exclude dev,staging > prod_only.txt
 ```
 
 What it does:
 
 - queries crt.sh for historical certificate names matching the domain
 - deduplicates and strips wildcards
+- `--exclude` throws out everything containing any of the comma-separated bits
+  (env names, legacy hosts — whatever pollutes your list)
 - refuses to run against non-public domains and anything resolving to
   private / loopback / link-local addresses
 
