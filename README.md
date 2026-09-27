@@ -10,6 +10,7 @@ Passive subdomain enumeration via Certificate Transparency logs (crt.sh).
 ```bash
 python3 recon.py example.com > subdomains.txt
 python3 recon.py example.com --exclude dev,staging > prod_only.txt
+python3 recon.py example.com --json | jq '.subdomains[]'
 ```
 
 What it does:
@@ -18,6 +19,7 @@ What it does:
 - deduplicates and strips wildcards
 - `--exclude` throws out everything containing any of the comma-separated bits
   (env names, legacy hosts — whatever pollutes your list)
+- `--json` prints a machine-readable object (handy to pipe into jq)
 - refuses to run against non-public domains and anything resolving to
   private / loopback / link-local addresses
 
