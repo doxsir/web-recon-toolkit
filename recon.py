@@ -46,13 +46,17 @@ def fetch(domain):
 def main():
     args = [a for a in sys.argv[1:]]
     excludes = set()
+    as_json = False
+    if "--json" in args:
+        as_json = True
+        args.remove("--json")
     if "--exclude" in args:
         i = args.index("--exclude")
         if i + 1 < len(args):
             excludes = {e.strip().lower() for e in args[i + 1].split(",") if e.strip()}
             del args[i:i + 2]
     if len(args) != 1:
-        sys.exit(f"usage: {sys.argv[0]} <public-domain> [--exclude sub1,sub2,...]")
+        sys.exit(f"usage: {sys.argv[0]} <public-domain> [--exclude sub1,sub2,...] [--json]")
     domain = args[0].lower().strip()
     if not is_public_domain(domain):
         sys.exit("refusing: not a public domain (or resolves to private/loopback IP)")
@@ -62,7 +66,10 @@ def main():
                    if e.get("name_value") and domain in e["name_value"]
                    and not any(x in e["name_value"].lower() for x in excludes)})
     print(f"[+] {len(subs)} unique subdomains for {domain}", file=sys.stderr)
-    print("\n".join(subs))
+    if as_json:
+        print(json.dumps({"domain": domain, "count": len(subs), "subdomains": subs}))
+    else:
+        print("\n".join(subs))
 
 if __name__ == "__main__":
     main()
